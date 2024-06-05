@@ -144,24 +144,31 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
      response = `END Invalid input!`; 
 }
 
-function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
-    const sql1 = 'SELECT * from amatora WHERE phoneNumber = ?';
+function saveVote(sessionId, serviceCode, phoneNumber, text, candidate, res) {
+    const sql1 = 'SELECT * FROM amatora WHERE phoneNumber = ?';
     db.query(sql1, [phoneNumber], (err, result) => {
-        if (err) throw err;
-        if(result.length > 0){
-            response = `END waratoye wowe!`; 
-        }else{
+        if (err) {
+            console.error('Error checking previous vote:', err.message);
+            return; // Stop execution if there's an error
+        }
+        if (result.length > 0) {
+            const response = `END You have already voted. Thank you for using our service.`;
+            res.set('Content-Type', 'text/plain');
+            res.send(response);
+        } else {
             const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
             db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
                 if (err) {
                     console.error('Error saving vote:', err.message);
-                } else {
-                    console.log('Vote saved successfully');
+                    return; // Stop execution if there's an error
                 }
-            });            
+                console.log('Vote saved successfully');
+                const response = `END Voting ${candidate} successful!`;
+                res.set('Content-Type', 'text/plain');
+                res.send(response);
+            });
         }
     });
-
 }
 
     // Send the response back to the API
