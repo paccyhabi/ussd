@@ -1,9 +1,9 @@
 const express = require('express');
 
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 
 app.get("/api/test", function(req,res){
     res.send("test request");
@@ -22,22 +22,43 @@ app.post('/ussd', (req, res) => {
 
     if (text == '') {
         // This is the first request. Note how we start the response with CON
-        response = `CON What would you like to check
-        1. My account
-        2. My phone number`;
+        response = `CON Welcome to voting system!
+            Murakaza neza kurubuga rw'amatora!
+        1. Kinyarwanda
+        2. English`;
     } else if ( text == '1') {
         // Business logic for first level response
-        response = `CON Choose account information you want to view
-        1. Account number`;
+        response = `CON Hitamo Umukandida
+        1. Kamanzi Eric;
+        2. Habimana Yves;
+        3. Itangishaka Claude;
+        4. Umwali Aliance`;
     } else if ( text == '2') {
-        // Business logic for first level response
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your phone number is ${phoneNumber}`;
+        response = `CON Select candidate
+        1. Kamanzi Eric;
+        2. Habimana Yves;
+        3. Itangishaka Claude;
+        4. Umwali Aliance`;
     } else if ( text == '1*1') {
-        // This is a second level response where the user selected 1 in the first instance
-        const accountNumber = 'ACC100101';
-        // This is a terminal request. Note how we start the response with END
-        response = `END Your account number is ${accountNumber}`;
+        const candidate = 'Kamanzi eric';
+        response = `CON Emeza gutora ${candidate}
+            1. Yego
+            2.Oya`;
+    }else if ( text == '1*2') {
+        const candidate = 'Habimana Yves';
+        response = `CON Emeza gutora ${candidate}
+            1. Yego
+            2.Oya`;
+    }else if ( text == '1*3') {
+        const candidate = 'Itangishaka Claude';
+        response = `CON Emeza gutora ${candidate}
+            1. Yego
+            2.Oya`;
+    }else if ( text == '1*4') {
+        const candidate = 'Umwali Aliance';
+        response = `CON Emeza gutora ${candidate}
+            1. Yego
+            2.Oya`;
     }
 
     // Send the response back to the API
