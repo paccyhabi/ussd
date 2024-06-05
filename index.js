@@ -45,8 +45,12 @@ app.post('/ussd', (req, res) => {
             if (err) throw err;
             if (result.length > 0) {
                 response = `END Wamaze Gutora. Wakoze gukoresha serivisi zacu!`;
+                res.set('Content-Type', 'text/plain');
+                res.send(response);
             } else {
                 response = `CON  Hitamo umukandida\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
+                res.set('Content-Type', 'text/plain');
+                res.send(response);
             }
         });
     } else if (text == '2') {
@@ -55,8 +59,12 @@ app.post('/ussd', (req, res) => {
             if (err) throw err;
             if (result.length > 0) {
                 response = `END You have already voted. Thank you for using our service.`;
+                res.set('Content-Type', 'text/plain');
+                res.send(response);
             } else {
                 response = `CON Select candidate\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
+                res.set('Content-Type', 'text/plain');
+                res.send(response);
             }
         });
     } else if ( text == '1*1') {
