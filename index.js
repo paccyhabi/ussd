@@ -41,6 +41,11 @@ app.post('/ussd', (req, res) => {
         1. Kinyarwanda
         2. English`;
     } else if ( text == '1') {
+        db.query('SELECT * FROM amatora WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
+            if (err) throw err;
+            if (results.length > 0) {
+                response = `END Wamaze Gutora. Mwakoze gukoresha iyi serivisi!`;
+            }})
         // Business logic for first level response
         response = `CON Hitamo Umukandida
         1. Kamanzi Eric
@@ -101,13 +106,7 @@ app.post('/ussd', (req, res) => {
             //VOTING (YES) IN KINYARWANDA
     }else if(text == '1*1*1'){
         candidate = 'Kamanzi eric';
-
-        const sql = 'INSERT INTO amatora (sessionId,serviceCode,phoneNumber,text,candidate) VALUES (?,?,?,?,?)';
-        db.query(sql, [sessionId,serviceCode,phoneNumber,text,candidate], (err, result) => {
-        if (err) throw err;
-        res.status(201).json({ message: 'Brand created successfully' });
-         });
-
+        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
         response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*2*1'){
         candidate = 'Habimana Yves;';
