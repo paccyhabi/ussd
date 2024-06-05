@@ -44,6 +44,9 @@ app.post('/ussd', (req, res) => {
         response = `CON Emeza gutora ${candidate}
             1. Yego
             2.Oya`;
+        if(text == '2'){
+            text = ''
+        }
     }else if ( text == '1*2') {
         const candidate = 'Habimana Yves';
         response = `CON Emeza gutora ${candidate}
