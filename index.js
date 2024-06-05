@@ -89,26 +89,23 @@ app.post('/ussd', (req, res) => {
     res.send(response);
 });
 
-function saveVote(sessionId, serviceCode, phoneNumber, text) {
+function getCandidateName(text) {
     const candidateCodes = text.split('*').slice(2); // Extract candidate codes
     const candidates = ['Kamanzi Eric', 'Habimana Yves', 'Itangishaka Claude', 'Umwali Aliance'];
     const candidateIndex = parseInt(candidateCodes[candidateCodes.length - 1]) - 1;
-    const candidate = candidates[candidateIndex];
-    
-    if (candidate) {
-        const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
-        db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
-            if (err) {
-                console.error('Error saving vote:', err.message);
-            } else {
-                console.log('Vote saved successfully');
-            }
-        });
-    } else {
-        console.error('Error saving vote: Invalid candidate selection');
-    }
+    return candidates[candidateIndex];
 }
 
+function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
+    const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
+        if (err) {
+            console.error('Error saving vote:', err.message);
+        } else {
+            console.log('Vote saved successfully');
+        }
+    });
+}
 
 const PORT = process.env.PORT || 3001;
 
