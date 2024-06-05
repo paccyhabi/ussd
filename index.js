@@ -141,33 +141,16 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
 }else if(text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
     response = 'END Thank you for using our services';
 }
-
 function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
-    // Check if the phone number has already voted
-    const checkQuery = 'SELECT * FROM amatora WHERE phoneNumber = ?';
-    db.query(checkQuery, [phoneNumber], (err, result) => {
+    const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
         if (err) {
-            console.error('Error checking vote:', err.message);
+            console.error('Error saving vote:', err.message);
         } else {
-            if (result.length > 0) {
-                console.log('User has already voted');
-                // You can send a response indicating that the user has already voted
-                // Or you can choose to do nothing and let the existing response handle it
-            } else {
-                // If the phone number hasn't voted yet, save the vote
-                const insertQuery = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
-                db.query(insertQuery, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
-                    if (err) {
-                        console.error('Error saving vote:', err.message);
-                    } else {
-                        console.log('Vote saved successfully');
-                    }
-                });
-            }
+            console.log('Vote saved successfully');
         }
     });
 }
-
 
     // Send the response back to the API
     res.set('Content-Type: text/plain');
