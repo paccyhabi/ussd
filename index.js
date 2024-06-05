@@ -45,7 +45,7 @@ app.post('/ussd', (req, res) => {
             1. Yego
             2.Oya`;
         if(text == '2'){
-            text = ''
+            response = 'END See you!';
         }
     }else if ( text == '1*2') {
         const candidate = 'Habimana Yves';
