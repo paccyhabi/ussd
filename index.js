@@ -141,25 +141,27 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
 }else if(text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
     response = 'END Thank you for using our services';
 }else{
+     response = `END Invalid input!`; 
+}
+
+function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
     const sql1 = 'SELECT * from amatora WHERE phoneNumber = ?';
     db.query(sql1, [phoneNumber], (err, result) => {
         if (err) throw err;
         if(result.length > 0){
             response = `END waratoye wowe!`; 
+        }else{
+            const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
+            db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
+                if (err) {
+                    console.error('Error saving vote:', err.message);
+                } else {
+                    console.log('Vote saved successfully');
+                }
+            });            
         }
     });
-}
 
-function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
-
-    const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
-    db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
-        if (err) {
-            console.error('Error saving vote:', err.message);
-        } else {
-            console.log('Vote saved successfully');
-        }
-    });
 }
 
     // Send the response back to the API
