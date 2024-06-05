@@ -89,14 +89,14 @@ app.post('/ussd', (req, res) => {
     }else if(text == '1*1*1'){
         candidate = 'Kamanzi eric';
         response = `END Gutora ${candidate} Byakunze!`;
-    }else if(text == '1*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '1*2*1'){
+        candidate = 'Habimana Yves;';
         response = `END Gutora ${candidate} Byakunze!`;
-    }else if(text == '1*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '1*3*1'){
+        candidate = 'Itangishaka Claude';
         response = `END Gutora ${candidate} Byakunze!`;
-    }else if(text == '1*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '1*4*1'){
+        candidate = 'Umwali Aliance';
         response = `END Gutora ${candidate} Byakunze!`;
     }
      //VOTING (YES) IN ENGLISH
@@ -104,19 +104,21 @@ app.post('/ussd', (req, res) => {
     else if(text == '2*1*1'){
         candidate = 'Kamanzi eric';
         response = `END Voting ${candidate} successful!`;
-    }else if(text == '2*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '2*2*1'){
+        candidate = 'Habimana Yves';
         response = `END Voting ${candidate} successful!`;
-    }else if(text == '2*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '2*3*1'){
+        candidate = 'Itangishaka Claude';
         response = `END Voting ${candidate} successful!`;
-    }else if(text == '2*1*1'){
-        candidate = 'Kamanzi eric';
+    }else if(text == '2*4*1'){
+        candidate = 'Umwali Aliance';
         response = `END Voting ${candidate} successful!`;
     }
 //IF USER SELECTED NO
-else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2' || text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
-    text = '';
+else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'){
+    response = 'END Mwakoze Gukoresh iyi service ';
+}else if(text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
+    response = 'END Thank you for using our services';
 }
 
     // Send the response back to the API
