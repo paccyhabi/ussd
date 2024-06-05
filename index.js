@@ -152,9 +152,7 @@ function saveVote(sessionId, serviceCode, phoneNumber, text, candidate, res) {
             return; // Stop execution if there's an error
         }
         if (result.length > 0) {
-            const response = `END You have already voted. Thank you for using our service.`;
-            res.set('Content-Type', 'text/plain');
-            res.send(response);
+            response = `END You have already voted. Thank you for using our service.`;
         } else {
             const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
             db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
@@ -163,9 +161,7 @@ function saveVote(sessionId, serviceCode, phoneNumber, text, candidate, res) {
                     return; // Stop execution if there's an error
                 }
                 console.log('Vote saved successfully');
-                const response = `END Voting ${candidate} successful!`;
-                res.set('Content-Type', 'text/plain');
-                res.send(response);
+                response = `END Voting ${candidate} successful!`;
             });
         }
     });
