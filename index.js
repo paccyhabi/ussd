@@ -1,8 +1,21 @@
 const express = require('express');
-
+const mysql = require('mysql2');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+
+const db = mysql.createConnection({
+    host: 'baizb0rtpbpv1jcgkepo-mysql.services.clever-cloud.com',
+    user: 'urh9jfaitvskqwmk',
+    password: 'ioPmSsidC2oWWoveVY4x',
+    database: 'baizb0rtpbpv1jcgkepo'
+});
+db.connect(err => {
+    if (err) throw err;
+    console.log('Connected to the MySQL database');
+});
+
 
 
 app.get("/api/test", function(req,res){
@@ -19,7 +32,7 @@ app.post('/ussd', (req, res) => {
     } = req.body;
 
     let response = '';
-    let candidate = '';
+    const candidate = '';
 
     if (text == '') {
         // This is the first request. Note how we start the response with CON
@@ -30,15 +43,15 @@ app.post('/ussd', (req, res) => {
     } else if ( text == '1') {
         // Business logic for first level response
         response = `CON Hitamo Umukandida
-        1. Kamanzi Eric;
-        2. Habimana Yves;
-        3. Itangishaka Claude;
+        1. Kamanzi Eric
+        2. Habimana Yves
+        3. Itangishaka Claude
         4. Umwali Aliance`;
     } else if ( text == '2') {
         response = `CON Select candidate
-        1. Kamanzi Eric;
-        2. Habimana Yves;
-        3. Itangishaka Claude;
+        1. Kamanzi Eric
+        2. Habimana Yves
+        3. Itangishaka Claude
         4. Umwali Aliance`;
 
         //FOR KINYARWANDA LANGUAGE
@@ -88,16 +101,23 @@ app.post('/ussd', (req, res) => {
             //VOTING (YES) IN KINYARWANDA
     }else if(text == '1*1*1'){
         candidate = 'Kamanzi eric';
-        response = `END Gutora ${candidate} Byakunze!`;
+
+        const sql = 'INSERT INTO amatora (sessionId,serviceCode,phoneNumber,text,candidate) VALUES (?,?,?,?,?)';
+        db.query(sql, [sessionId,serviceCode,phoneNumber,text,candidate], (err, result) => {
+        if (err) throw err;
+        res.status(201).json({ message: 'Brand created successfully' });
+         });
+
+        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*2*1'){
         candidate = 'Habimana Yves;';
-        response = `END Gutora ${candidate} Byakunze!`;
+        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*3*1'){
         candidate = 'Itangishaka Claude';
-        response = `END Gutora ${candidate} Byakunze!`;
+        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*4*1'){
         candidate = 'Umwali Aliance';
-        response = `END Gutora ${candidate} Byakunze!`;
+        response = `END Gutora ${candidate} Byagenze neza!`;
     }
      //VOTING (YES) IN ENGLISH
 
