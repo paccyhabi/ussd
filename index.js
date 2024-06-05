@@ -35,38 +35,26 @@ app.post('/ussd', (req, res) => {
     let candidate = '';
 
     if (text == '') {
+        // This is the first request. Note how we start the response with CON
         response = `CON Welcome to voting system!
-        Murakaza neza kurubuga rw'amatora!
+            Murakaza neza kurubuga rw'amatora!
         1. Kinyarwanda
         2. English`;
-    } else if (text == '1') {
-        const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
-        db.query(sql, [phoneNumber], (err, result) => {
-            if (err) throw err;
-            if (result.length > 0) {
-                response = `END Wamaze Gutora. Wakoze gukoresha serivisi zacu!`;
-                res.set('Content-Type', 'text/plain');
-                res.send(response);
-            } else {
-                response = `CON  Hitamo umukandida\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
-                res.set('Content-Type', 'text/plain');
-                res.send(response);
-            }
-        });
-    } else if (text == '2') {
-        const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
-        db.query(sql, [phoneNumber], (err, result) => {
-            if (err) throw err;
-            if (result.length > 0) {
-                response = `END You have already voted. Thank you for using our service.`;
-                res.set('Content-Type', 'text/plain');
-                res.send(response);
-            } else {
-                response = `CON Select candidate\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
-                res.set('Content-Type', 'text/plain');
-                res.send(response);
-            }
-        });
+    } else if ( text == '1') {
+        // Business logic for first level response
+        response = `CON Hitamo Umukandida
+        1. Kamanzi Eric
+        2. Habimana Yves
+        3. Itangishaka Claude
+        4. Umwali Aliance`;
+    } else if ( text == '2') {
+        response = `CON Select candidate
+        1. Kamanzi Eric
+        2. Habimana Yves
+        3. Itangishaka Claude
+        4. Umwali Aliance`;
+
+        //FOR KINYARWANDA LANGUAGE
     } else if ( text == '1*1') {
         candidate = 'Kamanzi eric';
         response = `CON Emeza gutora ${candidate}
@@ -153,16 +141,33 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
 }else if(text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
     response = 'END Thank you for using our services';
 }
+
 function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
-    const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
-    db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
+    // Check if the phone number has already voted
+    const checkQuery = 'SELECT * FROM amatora WHERE phoneNumber = ?';
+    db.query(checkQuery, [phoneNumber], (err, result) => {
         if (err) {
-            console.error('Error saving vote:', err.message);
+            console.error('Error checking vote:', err.message);
         } else {
-            console.log('Vote saved successfully');
+            if (result.length > 0) {
+                console.log('User has already voted');
+                // You can send a response indicating that the user has already voted
+                // Or you can choose to do nothing and let the existing response handle it
+            } else {
+                // If the phone number hasn't voted yet, save the vote
+                const insertQuery = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
+                db.query(insertQuery, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
+                    if (err) {
+                        console.error('Error saving vote:', err.message);
+                    } else {
+                        console.log('Vote saved successfully');
+                    }
+                });
+            }
         }
     });
 }
+
 
     // Send the response back to the API
     res.set('Content-Type: text/plain');
