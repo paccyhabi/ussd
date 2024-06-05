@@ -142,7 +142,7 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
     response = 'END Thank you for using our services';
 }
 function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
-    const sql1 = 'SELECT * amatora WHERE phoneNumber = ?';
+    const sql1 = 'SELECT * from amatora WHERE phoneNumber = ?';
     db.query(sql1, [phoneNumber], (err, result) => {
         if (err) throw err;
         if(result.length > 0){
