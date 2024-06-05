@@ -140,8 +140,7 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
     response = 'END Mwakoze Gukoresh iyi service ';
 }else if(text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
     response = 'END Thank you for using our services';
-}
-function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
+}else{
     const sql1 = 'SELECT * from amatora WHERE phoneNumber = ?';
     db.query(sql1, [phoneNumber], (err, result) => {
         if (err) throw err;
@@ -149,6 +148,10 @@ function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
             response = `END waratoye wowe!`; 
         }
     });
+}
+
+function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
+
     const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
     db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
         if (err) {
