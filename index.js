@@ -41,11 +41,13 @@ app.post('/ussd', (req, res) => {
         1. Kinyarwanda
         2. English`;
     } else if ( text == '1') {
-        db.query('SELECT * FROM amatora WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
+        const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
+        db.query(sql, [phoneNumber], (err, result) => {
             if (err) throw err;
-            if (results.length > 0) {
-                response = `END Wamaze Gutora. Mwakoze gukoresha iyi serivisi!`;
-            }})
+            if (result.length > 0) {
+                response = `END Wamaze gutora! Murakoze gukoresha iyi serivisi`;
+            }
+        });
         // Business logic for first level response
         response = `CON Hitamo Umukandida
         1. Kamanzi Eric
