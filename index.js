@@ -19,6 +19,7 @@ app.post('/ussd', (req, res) => {
     } = req.body;
 
     let response = '';
+    let candidate = '';
 
     if (text == '') {
         // This is the first request. Note how we start the response with CON
@@ -39,30 +40,81 @@ app.post('/ussd', (req, res) => {
         2. Habimana Yves;
         3. Itangishaka Claude;
         4. Umwali Aliance`;
+
+        //FOR KINYARWANDA LANGUAGE
     } else if ( text == '1*1') {
-        const candidate = 'Kamanzi eric';
+        candidate = 'Kamanzi eric';
         response = `CON Emeza gutora ${candidate}
-            1. Yego
+            1.Yego
             2.Oya`;
-        if(text == '2'){
-            response = 'END See you!';
-        }
     }else if ( text == '1*2') {
-        const candidate = 'Habimana Yves';
+        candidate = 'Habimana Yves';
         response = `CON Emeza gutora ${candidate}
-            1. Yego
+            1.Yego
             2.Oya`;
     }else if ( text == '1*3') {
-        const candidate = 'Itangishaka Claude';
+        candidate = 'Itangishaka Claude';
         response = `CON Emeza gutora ${candidate}
-            1. Yego
+            1.Yego
             2.Oya`;
     }else if ( text == '1*4') {
-        const candidate = 'Umwali Aliance';
+        candidate = 'Umwali Aliance';
         response = `CON Emeza gutora ${candidate}
-            1. Yego
+            1.Yego
             2.Oya`;
+
+    //FOR ENGLISH USERS
+    }else if ( text == '2*1') {
+        candidate = 'Kamanzi eric';
+        response = `CON Confirm to vote ${candidate}
+            1.Yes
+            2.No`;
+    }else if ( text == '2*2') {
+        candidate = 'Habimana Yves';
+        response = `CON Confirm to vote ${candidate}
+            1.Yes
+            2.No`;
+    }else if ( text == '2*3') {
+        candidate = 'Itangishaka Claude';
+        response = `CON Confirm to vote ${candidate}
+            1.Yes
+            2.No`;
+    }else if ( text == '2*4') {
+        candidate = 'Umwali Aliance';
+        response = `CON Confirm to vote ${candidate}
+            1.Yes
+            2.No`;
+
+            //VOTING (YES) IN KINYARWANDA
+    }else if(text == '1*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Gutora ${candidate} Byakunze!`;
+    }else if(text == '1*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Gutora ${candidate} Byakunze!`;
+    }else if(text == '1*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Gutora ${candidate} Byakunze!`;
+    }else if(text == '1*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Gutora ${candidate} Byakunze!`;
     }
+     //VOTING (YES) IN ENGLISH
+
+    else if(text == '2*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Voting ${candidate} successful!`;
+    }else if(text == '2*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Voting ${candidate} successful!`;
+    }else if(text == '2*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Voting ${candidate} successful!`;
+    }else if(text == '2*1*1'){
+        candidate = 'Kamanzi eric';
+        response = `END Voting ${candidate} successful!`;
+    }
+
 
     // Send the response back to the API
     res.set('Content-Type: text/plain');
