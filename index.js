@@ -35,33 +35,30 @@ app.post('/ussd', (req, res) => {
     let candidate = '';
 
     if (text == '') {
-        // This is the first request. Note how we start the response with CON
         response = `CON Welcome to voting system!
-            Murakaza neza kurubuga rw'amatora!
+        Murakaza neza kurubuga rw'amatora!
         1. Kinyarwanda
         2. English`;
-    } else if ( text == '1') {
+    } else if (text == '1') {
         const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
         db.query(sql, [phoneNumber], (err, result) => {
             if (err) throw err;
             if (result.length > 0) {
-                response = `END Wamaze gutora! Murakoze gukoresha iyi serivisi`;
+                response = `END Wamaze Gutora. Wakoze gukoresha serivisi zacu!`;
+            } else {
+                response = `CON  Hitamo umukandida\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
             }
         });
-        // Business logic for first level response
-        response = `CON Hitamo Umukandida
-        1. Kamanzi Eric
-        2. Habimana Yves
-        3. Itangishaka Claude
-        4. Umwali Aliance`;
-    } else if ( text == '2') {
-        response = `CON Select candidate
-        1. Kamanzi Eric
-        2. Habimana Yves
-        3. Itangishaka Claude
-        4. Umwali Aliance`;
-
-        //FOR KINYARWANDA LANGUAGE
+    } else if (text == '2') {
+        const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
+        db.query(sql, [phoneNumber], (err, result) => {
+            if (err) throw err;
+            if (result.length > 0) {
+                response = `END You have already voted. Thank you for using our service.`;
+            } else {
+                response = `CON Select candidate\n1. Kamanzi Eric\n2. Habimana Yves\n3. Itangishaka Claude\n4. Umwali Aliance`;
+            }
+        });
     } else if ( text == '1*1') {
         candidate = 'Kamanzi eric';
         response = `CON Emeza gutora ${candidate}
