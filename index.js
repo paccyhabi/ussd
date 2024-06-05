@@ -114,7 +114,10 @@ app.post('/ussd', (req, res) => {
         candidate = 'Kamanzi eric';
         response = `END Voting ${candidate} successful!`;
     }
-
+//IF USER SELECTED NO
+else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2' || text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2'){
+    text = '';
+}
 
     // Send the response back to the API
     res.set('Content-Type: text/plain');
