@@ -89,13 +89,6 @@ app.post('/ussd', (req, res) => {
     res.send(response);
 });
 
-function getCandidateName(text) {
-    const candidateCodes = text.split('*').slice(2); // Extract candidate codes
-    const candidates = ['Kamanzi Eric', 'Habimana Yves', 'Itangishaka Claude', 'Umwali Aliance'];
-    const candidateIndex = parseInt(candidateCodes[candidateCodes.length - 1]) - 1;
-    return candidates[candidateIndex];
-}
-
 function saveVote(sessionId, serviceCode, phoneNumber, text) {
     const candidateCodes = text.split('*').slice(2); // Extract candidate codes
     const candidates = ['Kamanzi Eric', 'Habimana Yves', 'Itangishaka Claude', 'Umwali Aliance'];
