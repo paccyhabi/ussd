@@ -112,41 +112,41 @@ app.post('/ussd', (req, res) => {
     } else if (text == '1*1*1') {
         language = 'kinyarwanda';
         candidate = 'Kamanzi Eric';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '1*2*1') {
         language = 'kinyarwanda';
         candidate = 'Habimana Yves';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '1*3*1') {
         language = 'kinyarwanda';
         candidate = 'Itangishaka Claude';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '1*4*1') {
         language = 'kinyarwanda';
         candidate = 'Umwali Aliance';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
 
         //VOTING (YES) IN ENGLISH
     } else if (text == '2*1*1') {
         language = 'english';
         candidate = 'Kamanzi Eric';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '2*2*1') {
         language = 'english';
         candidate = 'Habimana Yves';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '2*3*1') {
         language = 'english';
         candidate = 'Itangishaka Claude';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
     } else if (text == '2*4*1') {
         language = 'english';
         candidate = 'Umwali Aliance';
-        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
 
         //IF USER SELECTED NO
     } else if(text.endsWith('*20')){
-        getVotes(res, phoneNumber, language);
+        getVotes(res,language);
     }else if(text.endsWith('*0')){
         response = language === 'kinyarwanda' ? 'END Mwakoze Gukoresh iyi service' : 'END Thank you for using our services';
         sendResponse(res, response);
@@ -202,7 +202,7 @@ app.post('/ussd', (req, res) => {
         });
     }
 
-    function getVotes(res, phoneNumber, language) {
+    function getVotes(res,language) {
         const sql = 'SELECT candidate, COUNT(*) AS repetition_times FROM amatora GROUP BY candidate';
         db.query(sql, (err, results) => {
             if (err) {
