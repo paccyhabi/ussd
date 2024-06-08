@@ -149,7 +149,6 @@ app.post('/ussd', (req, res) => {
         getVotes(res,language);
     }else if(text.endsWith('*0')){
         ext(res,language)
-        sendResponse(res, response);
     }
     else if (text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2') {
         response = 'END Mwakoze Gukoresh iyi service ';
