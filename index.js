@@ -101,38 +101,38 @@ app.post('/ussd', (req, res) => {
             //VOTING (YES) IN KINYARWANDA
     }else if(text == '1*1*1'){
         candidate = 'Kamanzi eric';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*2*1'){
         candidate = 'Habimana Yves;';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*3*1'){
         candidate = 'Itangishaka Claude';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*4*1'){
         candidate = 'Umwali Aliance';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Gutora ${candidate} Byagenze neza!`;
     }
      //VOTING (YES) IN ENGLISH
 
     else if(text == '2*1*1'){
         candidate = 'Kamanzi eric';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Voting ${candidate} successful!`;
     }else if(text == '2*2*1'){
         candidate = 'Habimana Yves';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Voting ${candidate} successful!`;
     }else if(text == '2*3*1'){
         candidate = 'Itangishaka Claude';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Voting ${candidate} successful!`;
     }else if(text == '2*4*1'){
         candidate = 'Umwali Aliance';
-        saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+        checkVote(phoneNumber)
         response = `END Voting ${candidate} successful!`;
     }
 //IF USER SELECTED NO
@@ -144,16 +144,12 @@ else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'
      response = `END Invalid input!`; 
 }
 
-function saveVote(sessionId, serviceCode, phoneNumber, text, candidate, res) {
-    const sql1 = 'SELECT * FROM amatora WHERE phoneNumber = ?';
-    db.query(sql1, [phoneNumber], (err, result) => {
-        if (err) {
-            console.error('Error checking previous vote:', err.message);
-            return; // Stop execution if there's an error
-        }
-        if (result.length > 0) {
-            response = `END You have already voted. Thank you for using our service.`;
-        } else {
+
+
+
+
+
+function saveVote(sessionId, serviceCode, phoneNumber, text, candidate) {
             const sql = 'INSERT INTO amatora (sessionId, serviceCode, phoneNumber, text, candidate) VALUES (?, ?, ?, ?, ?)';
             db.query(sql, [sessionId, serviceCode, phoneNumber, text, candidate], (err, result) => {
                 if (err) {
@@ -164,9 +160,26 @@ function saveVote(sessionId, serviceCode, phoneNumber, text, candidate, res) {
                 response = `END Voting ${candidate} successful!`;
             });
         }
-    });
-}
 
+    
+        function checkVote(phoneNumber) {
+            const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
+            db.query(sql, [phoneNumber], (err, result) => {
+                if (err) {
+                    console.error('Error fetching data:', err.message);
+                    return; // Stop execution if there's an error
+                }
+                if (result.length > 0) {
+                    response = `END You have already voted!`; // Data found
+                }else{
+                    saveVote(sessionId, serviceCode, phoneNumber, text, candidate);
+                }
+                console.log('Query executed successfully!');
+            });
+        }
+        
+
+ 
     // Send the response back to the API
     res.set('Content-Type: text/plain');
     res.send(response);
