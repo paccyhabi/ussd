@@ -148,8 +148,8 @@ app.post('/ussd', (req, res) => {
     } else if(text.endsWith('*20')){
         getVotes(res,language);
     }else if(text.endsWith('*0')){
-        response = language === 'kinyarwanda' ? 'END Mwakoze Gukoresh iyi service' : 'END Thank you for using our services';
-        sendResponse(res, response, language);
+        ext(res,language)
+        sendResponse(res, response);
     }
     else if (text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2') {
         response = 'END Mwakoze Gukoresh iyi service ';
@@ -228,17 +228,22 @@ app.post('/ussd', (req, res) => {
     
             // Send the response
             response = language === 'kinyarwanda'
-                ? `END Amajwi yawe:\n${votesResponse}`
-                : `END Your votes:\n${votesResponse}`;
+                ? `END Amajwi:\n${votesResponse}`
+                : `END Votes:\n${votesResponse}`;
             sendResponse(res, response);
         });
     }
     
-    
+    function ext(res,response,language){
+        response = language === 'kinyarwanda'
+        ? `END Murakoze gukoresha iyi serivisi`
+        : `END Thank you for using our services`;
+    sendResponse(res, response);        
+    }
 
     
 
-    function sendResponse(res, response, language) {
+    function sendResponse(res, response) {
         res.set('Content-Type: text/plain');
         res.send(response);
     }
