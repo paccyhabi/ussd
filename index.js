@@ -31,6 +31,7 @@ app.post('/ussd', (req, res) => {
 
     let response = '';
     let candidate = '';
+    let language = ''; 
 
     if (text == '') {
         // This is the first request. Note how we start the response with CON
@@ -109,29 +110,37 @@ app.post('/ussd', (req, res) => {
 
         //VOTING (YES) IN KINYARWANDA
     } else if (text == '1*1*1') {
+        language = 'kinyarwanda';
         candidate = 'Kamanzi Eric';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '1*2*1') {
+        language = 'kinyarwanda';
         candidate = 'Habimana Yves';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '1*3*1') {
+        language = 'kinyarwanda';
         candidate = 'Itangishaka Claude';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '1*4*1') {
+        language = 'kinyarwanda';
         candidate = 'Umwali Aliance';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
 
         //VOTING (YES) IN ENGLISH
     } else if (text == '2*1*1') {
+        language = 'english';
         candidate = 'Kamanzi Eric';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '2*2*1') {
+        language = 'english';
         candidate = 'Habimana Yves';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '2*3*1') {
+        language = 'english';
         candidate = 'Itangishaka Claude';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
     } else if (text == '2*4*1') {
+        language = 'english';
         candidate = 'Umwali Aliance';
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
 
@@ -172,7 +181,11 @@ app.post('/ussd', (req, res) => {
                 return; // Stop execution if there's an error
             }
             if (result.length > 0) {
-                response = `END You have already voted!`; // Data found
+                if (language === 'kinyarwanda') {
+                    response = `END Wamaze gutora!`;
+                } else {
+                    response = `END You have already voted!`;
+                } // Data found
                 sendResponse(res, response);
             } else {
                 saveVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
