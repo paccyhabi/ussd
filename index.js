@@ -233,15 +233,38 @@ app.post('/ussd', (req, res) => {
         });
     }
     
-    function ext(res,language){
-        response = language === 'kinyarwanda'
-        ? `END Murakoze gukoresha iyi serivisi`
-        : `END Thank you for using our services`;
-    sendResponse(res, response);        
-    }
-
+    function ext(res,language) {
+        const sql = 'SELECT candidate, COUNT(*) AS repetition_times FROM amatora GROUP BY candidate';
+        db.query(sql, (err, results) => {
+            if (err) {
+                console.error('Error fetching votes:', err.message);
+                response = `END Error fetching votes. Please try again.`;
+                sendResponse(res, response);
+                return; // Stop execution if there's an error
+            }
     
-
+            let votesResponse = '';
+            let counter = 1;
+    
+            if (results.length > 0) {
+                results.forEach(row => {
+                    const candidate = row.candidate;
+                    const votes = row.repetition_times;
+                    votesResponse += `${counter}. ${candidate}: ${votes}\n`;
+                    counter++;
+                });
+            } else {
+                votesResponse = 'No votes recorded yet.';
+            }
+    
+            // Send the response
+            response = language === 'kinyarwanda'
+                ? `END Amajwi:\n${votesResponse}`
+                : `END Votes:\n${votesResponse}`;
+            sendResponse(res, response);
+        });
+    }
+    
     function sendResponse(res, response) {
         res.set('Content-Type: text/plain');
         res.send(response);
