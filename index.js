@@ -42,7 +42,6 @@ app.post('/ussd', (req, res) => {
         sendResponse(res, response);
     } else if (text == '1') {
         // Business logic for first level response
-        language = 'kinyarwanda';
         response = `CON Hitamo Umukandida
         1. Kamanzi Eric
         2. Habimana Yves
@@ -50,7 +49,6 @@ app.post('/ussd', (req, res) => {
         4. Umwali Aliance`;
         sendResponse(res, response);
     } else if (text == '2') {
-        language = 'english';
         response = `CON Select candidate
         1. Kamanzi Eric
         2. Habimana Yves
