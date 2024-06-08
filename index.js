@@ -145,7 +145,11 @@ app.post('/ussd', (req, res) => {
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language);
 
         //IF USER SELECTED NO
-    } else if(text.endsWith('*20')){
+    } else if(text == '1*1*1*20' || text == '1*2*1*20' || text == '1*3*1*20' || text == '1*4*1*20'){
+        language = "kinyarwanda";
+        getVotes(res,language);
+    }else if(text == '2*1*1*20' || text == '2*2*1*20' || text == '2*3*1*20' || text == '2*4*1*20'){
+        language = "english";
         getVotes(res,language);
     }else if(text == '1*1*1*0' || text == '1*2*1*0' || text == '1*3*1*0' || text == '1*4*1*0'){
         language = "kinyarwanda";
@@ -238,7 +242,7 @@ app.post('/ussd', (req, res) => {
     
     function ext(res,language){
         response = language === 'kinyarwanda'
-        ? `END Murakoze gukoresha iyi serivisi`
+        ? `END Mwakoze gukoresha iyi serivisi`
         : `END Thank you for using our services`;
     sendResponse(res, response);        
     }
