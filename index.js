@@ -102,38 +102,30 @@ app.post('/ussd', (req, res) => {
     }else if(text == '1*1*1'){
         candidate = 'Kamanzi eric';
         checkVote(phoneNumber)
-        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*2*1'){
         candidate = 'Habimana Yves;';
         checkVote(phoneNumber)
-        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*3*1'){
         candidate = 'Itangishaka Claude';
         checkVote(phoneNumber)
-        response = `END Gutora ${candidate} Byagenze neza!`;
     }else if(text == '1*4*1'){
         candidate = 'Umwali Aliance';
         checkVote(phoneNumber)
-        response = `END Gutora ${candidate} Byagenze neza!`;
     }
      //VOTING (YES) IN ENGLISH
 
     else if(text == '2*1*1'){
         candidate = 'Kamanzi eric';
         checkVote(phoneNumber)
-        response = `END Voting ${candidate} successful!`;
     }else if(text == '2*2*1'){
         candidate = 'Habimana Yves';
         checkVote(phoneNumber)
-        response = `END Voting ${candidate} successful!`;
     }else if(text == '2*3*1'){
         candidate = 'Itangishaka Claude';
         checkVote(phoneNumber)
-        response = `END Voting ${candidate} successful!`;
     }else if(text == '2*4*1'){
         candidate = 'Umwali Aliance';
         checkVote(phoneNumber)
-        response = `END Voting ${candidate} successful!`;
     }
 //IF USER SELECTED NO
 else if(text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2'){
