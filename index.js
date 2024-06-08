@@ -149,7 +149,7 @@ app.post('/ussd', (req, res) => {
         getVotes(res,language);
     }else if(text.endsWith('*0')){
         response = language === 'kinyarwanda' ? 'END Mwakoze Gukoresh iyi service' : 'END Thank you for using our services';
-        sendResponse(res, response);
+        sendResponse(res, response, language);
     }
     else if (text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2') {
         response = 'END Mwakoze Gukoresh iyi service ';
@@ -238,7 +238,7 @@ app.post('/ussd', (req, res) => {
 
     
 
-    function sendResponse(res, response) {
+    function sendResponse(res, response, language) {
         res.set('Content-Type: text/plain');
         res.send(response);
     }
