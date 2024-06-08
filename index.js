@@ -145,7 +145,13 @@ app.post('/ussd', (req, res) => {
         checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
 
         //IF USER SELECTED NO
-    } else if (text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2') {
+    } else if(text.endsWith('*20')){
+        getVotes(res, phoneNumber, language);
+    }else if(text.endsWith('*0')){
+        response = language === 'kinyarwanda' ? 'END Mwakoze Gukoresh iyi service' : 'END Thank you for using our services';
+        sendResponse(res, response);
+    }
+    else if (text == '1*1*2' || text == '1*2*2' || text == '1*3*2' || text == '1*4*2') {
         response = 'END Mwakoze Gukoresh iyi service ';
         sendResponse(res, response);
     } else if (text == '2*1*2' || text == '2*2*2' || text == '2*3*2' || text == '2*4*2') {
@@ -171,7 +177,7 @@ app.post('/ussd', (req, res) => {
         });
     }
 
-    function checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate) {
+    function checkVote(res, sessionId, serviceCode, phoneNumber, text, candidate, language) {
         const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
         db.query(sql, [phoneNumber], (err, result) => {
             if (err) {
@@ -181,11 +187,13 @@ app.post('/ussd', (req, res) => {
                 return; // Stop execution if there's an error
             }
             if (result.length > 0) {
-                if (language === 'kinyarwanda') {
-                    response = `END Wamaze gutora!`;
-                } else {
-                    response = `END You have already voted!`;
-                } // Data found
+                response = language === 'kinyarwanda'
+                    ? `CON Wamaze gutora! Hitamo:
+                    20. Reba amajwi
+                    0. Sohoka`
+                    : `CON You have already voted! Choose:
+                    20. View votes
+                    0. Exit`;
                 sendResponse(res, response);
             } else {
                 saveVote(res, sessionId, serviceCode, phoneNumber, text, candidate);
@@ -193,6 +201,42 @@ app.post('/ussd', (req, res) => {
             console.log('Query executed successfully!');
         });
     }
+
+    function getVotes(res, phoneNumber, language) {
+        const sql = 'SELECT candidate, COUNT(*) AS repetition_times FROM amatora GROUP BY candidate';
+        db.query(sql, (err, results) => {
+            if (err) {
+                console.error('Error fetching votes:', err.message);
+                response = `END Error fetching votes. Please try again.`;
+                sendResponse(res, response);
+                return; // Stop execution if there's an error
+            }
+    
+            let votesResponse = '';
+            let counter = 1;
+    
+            if (results.length > 0) {
+                results.forEach(row => {
+                    const candidate = row.candidate;
+                    const votes = row.repetition_times;
+                    votesResponse += `${counter}. ${candidate}: ${votes}\n`;
+                    counter++;
+                });
+            } else {
+                votesResponse = 'No votes recorded yet.';
+            }
+    
+            // Send the response
+            response = language === 'kinyarwanda'
+                ? `END Amajwi yawe:\n${votesResponse}`
+                : `END Your votes:\n${votesResponse}`;
+            sendResponse(res, response);
+        });
+    }
+    
+    
+
+    
 
     function sendResponse(res, response) {
         res.set('Content-Type: text/plain');
