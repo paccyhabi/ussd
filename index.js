@@ -233,7 +233,7 @@ app.post('/ussd', (req, res) => {
         });
     }
     
-    function ext(res,response,language){
+    function ext(res,language){
         response = language === 'kinyarwanda'
         ? `END Murakoze gukoresha iyi serivisi`
         : `END Thank you for using our services`;
