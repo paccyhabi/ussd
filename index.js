@@ -49,7 +49,7 @@ app.post('/ussd', (req, res) => {
     }
 
     function fetchCandidates(languageCode, res) {
-        const sql = 'SELECT id, candidate FROM candidates';
+        const sql = 'SELECT id, name FROM candidates';
         db.query(sql, (err, results) => {
             if (err) {
                 console.error('Error fetching candidates:', err.message);
@@ -60,7 +60,7 @@ app.post('/ussd', (req, res) => {
 
             let candidateList = '';
             results.forEach((row, index) => {
-                candidateList += `${index + 1}. ${row.candidate}\n`;
+                candidateList += `${index + 1}. ${row.name}\n`;
             });
 
             if (languageCode == '1') {
@@ -79,7 +79,7 @@ app.post('/ussd', (req, res) => {
         const candidateIndex = parts[1] - 1;
         const confirmation = parts[2];
 
-        const sql = 'SELECT candidate FROM candidates LIMIT 1 OFFSET ?';
+        const sql = 'SELECT name FROM candidates LIMIT 1 OFFSET ?';
         db.query(sql, [candidateIndex], (err, results) => {
             if (err) {
                 console.error('Error fetching candidate:', err.message);
@@ -96,7 +96,7 @@ app.post('/ussd', (req, res) => {
                 return;
             }
 
-            candidate = results[0].candidate;
+            candidate = results[0].name;
 
             if (!confirmation) {
                 response = languageCode == '1'
