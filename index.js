@@ -39,7 +39,6 @@ app.post('/ussd', (req, res) => {
         2. English`;
         sendResponse(res, response);
     } else if (text == '1' || text == '2') {
-        // Fetch candidates from the database
         fetchCandidates((err, candidates) => {
             if (err) {
                 response = `END Error fetching candidates. Please try again.`;
@@ -55,7 +54,6 @@ app.post('/ussd', (req, res) => {
             sendResponse(res, response);
         });
     } else {
-        // Parse the input to get the candidate selection and language
         let inputs = text.split('*');
         if (inputs.length === 2) {
             let selectedLanguage = inputs[0];
@@ -75,7 +73,6 @@ app.post('/ussd', (req, res) => {
                 sendResponse(res, response);
             });
         } else if (inputs.length === 3 && (inputs[2] === '1' || inputs[2] === '2')) {
-            // Handle the confirmation
             let selectedLanguage = inputs[0];
             let candidateIndex = parseInt(inputs[1], 10) - 1;
 
@@ -98,6 +95,14 @@ app.post('/ussd', (req, res) => {
                     sendResponse(res, response);
                 }
             });
+        } else if (inputs.length === 3 && (inputs[2] === '20')) {
+            let selectedLanguage = inputs[0];
+            language = selectedLanguage == '1' ? 'kinyarwanda' : 'english';
+            getVotes(res, language);
+        } else if (inputs.length === 3 && (inputs[2] === '0')) {
+            let selectedLanguage = inputs[0];
+            language = selectedLanguage == '1' ? 'kinyarwanda' : 'english';
+            ext(res, language);
         } else {
             response = `END Invalid input!`;
             sendResponse(res, response);
@@ -106,7 +111,7 @@ app.post('/ussd', (req, res) => {
 });
 
 function fetchCandidates(callback) {
-    const sql = 'SELECT candidate FROM candidates'; // Assuming you have a table named 'candidates'
+    const sql = 'SELECT candidate FROM candidates';
     db.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching candidates:', err.message);
@@ -149,6 +154,44 @@ function saveVote(res, sessionId, serviceCode, phoneNumber, text, candidate) {
         response = `END Voting ${candidate} successful!`;
         sendResponse(res, response);
     });
+}
+
+function getVotes(res, language) {
+    const sql = 'SELECT candidate, COUNT(*) AS repetition_times FROM amatora GROUP BY candidate';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching votes:', err.message);
+            response = `END Error fetching votes. Please try again.`;
+            sendResponse(res, response);
+            return;
+        }
+
+        let votesResponse = '';
+        let counter = 1;
+
+        if (results.length > 0) {
+            results.forEach(row => {
+                const candidate = row.candidate;
+                const votes = row.repetition_times;
+                votesResponse += `${counter}. ${candidate}: ${votes}\n`;
+                counter++;
+            });
+        } else {
+            votesResponse = 'No votes recorded yet.';
+        }
+
+        response = language === 'kinyarwanda'
+            ? `END Amajwi:\n${votesResponse}`
+            : `END Votes:\n${votesResponse}`;
+        sendResponse(res, response);
+    });
+}
+
+function ext(res, language) {
+    response = language === 'kinyarwanda'
+        ? `END Mwakoze gukoresha iyi serivisi`
+        : `END Thank you for using our services`;
+    sendResponse(res, response);
 }
 
 function sendResponse(res, response) {
