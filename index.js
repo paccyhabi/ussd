@@ -107,10 +107,17 @@ app.post('/ussd', (req, res) => {
                 if (confirmation == '1') {
                     language = languageCode == '1' ? 'kinyarwanda' : 'english';
                     checkVote(res, phoneNumber, language, candidate);
-                } else {
+                } else if (confirmation == '2') {
                     response = languageCode == '1'
                         ? 'END Mwakoze Gukoresh iyi service'
                         : 'END Thank you for using our services';
+                    sendResponse(res, response);
+                } else if (confirmation == '20') {
+                    getVotes(res, languageCode == '1' ? 'kinyarwanda' : 'english');
+                } else if (confirmation == '0') {
+                    ext(res, languageCode == '1' ? 'kinyarwanda' : 'english');
+                } else {
+                    response = `END Invalid input!`;
                     sendResponse(res, response);
                 }
             }
