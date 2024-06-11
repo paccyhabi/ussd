@@ -29,20 +29,18 @@ app.post('/ussd', (req, res) => {
     } = req.body;
 
     let response = '';
-    let candidate = '';
-    let language = ''; 
 
-    if (text == '') {
+    if (text === '') {
         response = `CON Welcome to voting system!
-           Murakaza neza kurubuga rw'amatora!
+        Murakaza neza kurubuga rw'amatora!
         1. Kinyarwanda
         2. English`;
         sendResponse(res, response);
-    } else if (text == '1' || text == '2') {
+    } else if (text === '1' || text === '2') {
         const languageCode = text;
         fetchCandidates(languageCode, res);
     } else if (text.startsWith('1*') || text.startsWith('2*')) {
-        handleCandidateSelection(text, res, phoneNumber);
+        handleCandidateSelection(text, res, phoneNumber, sessionId, serviceCode);
     } else {
         response = `END Invalid input!`;
         sendResponse(res, response);
@@ -73,11 +71,19 @@ app.post('/ussd', (req, res) => {
         });
     }
 
-    function handleCandidateSelection(text, res, phoneNumber) {
+    function handleCandidateSelection(text, res, phoneNumber, sessionId, serviceCode) {
         const parts = text.split('*');
         const languageCode = parts[0];
         const candidateIndex = parts[1] - 1;
         const confirmation = parts[2];
+
+        if (confirmation === '20') {
+            getVotes(res, languageCode == '1' ? 'kinyarwanda' : 'english');
+            return;
+        } else if (confirmation === '0') {
+            exit(res, languageCode == '1' ? 'kinyarwanda' : 'english');
+            return;
+        }
 
         const sql = 'SELECT candidate FROM candidates LIMIT 1 OFFSET ?';
         db.query(sql, [candidateIndex], (err, results) => {
@@ -96,7 +102,7 @@ app.post('/ussd', (req, res) => {
                 return;
             }
 
-            candidate = results[0].candidate;
+            const candidate = results[0].candidate;
 
             if (!confirmation) {
                 response = languageCode == '1'
@@ -105,17 +111,13 @@ app.post('/ussd', (req, res) => {
                 sendResponse(res, response);
             } else {
                 if (confirmation == '1') {
-                    language = languageCode == '1' ? 'kinyarwanda' : 'english';
-                    checkVote(res, phoneNumber, language, candidate);
+                    const language = languageCode == '1' ? 'kinyarwanda' : 'english';
+                    checkVote(res, phoneNumber, language, candidate, sessionId, serviceCode, text);
                 } else if (confirmation == '2') {
                     response = languageCode == '1'
                         ? 'END Mwakoze Gukoresh iyi service'
                         : 'END Thank you for using our services';
                     sendResponse(res, response);
-                } else if (confirmation == '20') {
-                    getVotes(res, languageCode == '1' ? 'kinyarwanda' : 'english');
-                } else if (confirmation == '0') {
-                    ext(res, languageCode == '1' ? 'kinyarwanda' : 'english');
                 } else {
                     response = `END Invalid input!`;
                     sendResponse(res, response);
@@ -139,7 +141,7 @@ app.post('/ussd', (req, res) => {
         });
     }
 
-    function checkVote(res, phoneNumber, language, candidate) {
+    function checkVote(res, phoneNumber, language, candidate, sessionId, serviceCode, text) {
         const sql = 'SELECT * FROM amatora WHERE phoneNumber = ?';
         db.query(sql, [phoneNumber], (err, result) => {
             if (err) {
@@ -191,7 +193,7 @@ app.post('/ussd', (req, res) => {
         });
     }
 
-    function ext(res, language) {
+    function exit(res, language) {
         response = language === 'kinyarwanda'
             ? `END Mwakoze gukoresha iyi serivisi`
             : `END Thank you for using our services`;
